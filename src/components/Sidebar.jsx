@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Building2, Users, ShoppingCart,
+  LayoutDashboard, Building2, Users,
   Stamp, BarChart3, FileText, ArrowLeftRight,
   Package, Map, Bell,
 } from 'lucide-react';
@@ -14,7 +14,6 @@ const navItems = [
     { id: 'importers', label: 'Importers', icon: Users },
   ]},
   { section: 'OPERATIONS', items: [
-    { id: 'orders', label: 'Orders', icon: ShoppingCart },
     { id: 'marking', label: 'Direct Marking', icon: Stamp },
     { id: 'sync', label: 'Sync Monitor', icon: ArrowLeftRight },
   ]},
