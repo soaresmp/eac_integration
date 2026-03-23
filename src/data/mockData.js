@@ -121,6 +121,10 @@ export const orders = [
     markedCount: 31200,
     taxAmount: 1250000,
     currency: 'TZS',
+    customs: {
+      export: { system: 'iCMS', ref: 'iCMS-EXP-2024-KBL-0891', date: '2024-03-17' },
+      import: { system: 'TANCIS', ref: 'TANCIS-IMP-2024-DS-0891', date: null },
+    },
   },
   {
     id: 'ORD-TZ-2024-0892',
@@ -141,6 +145,10 @@ export const orders = [
     markedCount: 0,
     taxAmount: 875000,
     currency: 'TZS',
+    customs: {
+      export: { system: 'iCMS', ref: null, date: null },
+      import: { system: 'TANCIS', ref: null, date: null },
+    },
   },
   {
     id: 'ORD-KE-2024-1045',
@@ -161,6 +169,10 @@ export const orders = [
     markedCount: 80000,
     taxAmount: 3200000,
     currency: 'KES',
+    customs: {
+      export: { system: 'TANCIS', ref: 'TANCIS-EXP-2024-TBL-1045', date: '2024-03-02' },
+      import: { system: 'iCMS', ref: 'iCMS-IMP-2024-NBI-1045', date: '2024-03-03' },
+    },
   },
   {
     id: 'ORD-KE-2024-1046',
@@ -181,6 +193,10 @@ export const orders = [
     markedCount: 0,
     taxAmount: 1500000,
     currency: 'KES',
+    customs: {
+      export: { system: 'TANCIS', ref: null, date: null },
+      import: { system: 'iCMS', ref: null, date: null },
+    },
   },
   {
     id: 'ORD-TZ-2024-0880',
@@ -201,6 +217,10 @@ export const orders = [
     markedCount: 40000,
     taxAmount: 1000000,
     currency: 'TZS',
+    customs: {
+      export: { system: 'iCMS', ref: 'iCMS-EXP-2024-KBL-0880', date: '2024-02-08' },
+      import: { system: 'TANCIS', ref: 'TANCIS-IMP-2024-DS-0880', date: '2024-02-09' },
+    },
   },
 ];
 

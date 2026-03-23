@@ -19,6 +19,10 @@ const incomingData = [
     taxExpected: 1250000,
     taxCollected: 500000,
     currency: 'TZS',
+    customs: {
+      export: { system: 'iCMS', ref: 'iCMS-EXP-2024-KBL-0891', date: '2024-03-17' },
+      import: { system: 'TANCIS', ref: 'TANCIS-IMP-2024-DS-0891', date: null },
+    },
   },
   {
     id: 'INC-TZ-2024-0880',
@@ -36,6 +40,10 @@ const incomingData = [
     taxExpected: 1000000,
     taxCollected: 1000000,
     currency: 'TZS',
+    customs: {
+      export: { system: 'iCMS', ref: 'iCMS-EXP-2024-KBL-0880', date: '2024-02-08' },
+      import: { system: 'TANCIS', ref: 'TANCIS-IMP-2024-DS-0880', date: '2024-02-09' },
+    },
   },
   {
     id: 'INC-KE-2024-1045',
@@ -53,6 +61,10 @@ const incomingData = [
     taxExpected: 3200000,
     taxCollected: 3200000,
     currency: 'KES',
+    customs: {
+      export: { system: 'TANCIS', ref: 'TANCIS-EXP-2024-TBL-1045', date: '2024-03-02' },
+      import: { system: 'iCMS', ref: 'iCMS-IMP-2024-NBI-1045', date: '2024-03-03' },
+    },
   },
   {
     id: 'INC-TZ-2024-0892',
@@ -70,6 +82,10 @@ const incomingData = [
     taxExpected: 875000,
     taxCollected: 0,
     currency: 'TZS',
+    customs: {
+      export: { system: 'iCMS', ref: null, date: null },
+      import: { system: 'TANCIS', ref: null, date: null },
+    },
   },
 ];
 
@@ -205,6 +221,7 @@ export default function ImportTracking({ activeCountry }) {
                 <th>Border Cleared</th>
                 <th>Market Released</th>
                 <th>Tax ({activeCountry === 'KE' ? 'KES' : 'TZS'})</th>
+                <th>Customs Events</th>
                 <th>Border Ready</th>
                 <th>Status</th>
               </tr>
@@ -235,6 +252,28 @@ export default function ImportTracking({ activeCountry }) {
                       <div className="text-xs">
                         <div className="text-success">{item.taxCollected.toLocaleString()} ✓</div>
                         <div className="text-muted">{(item.taxExpected - item.taxCollected).toLocaleString()} pending</div>
+                      </div>
+                    </td>
+                    <td style={{ minWidth: 180 }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--eac-blue)', textTransform: 'uppercase', minWidth: 52 }}>
+                            {item.customs.export.system}
+                          </span>
+                          {item.customs.export.ref
+                            ? <code style={{ fontSize: 10, color: 'var(--eac-blue)' }}>{item.customs.export.ref}</code>
+                            : <span className="text-xs text-muted">Export pending</span>
+                          }
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: item.customs.import.ref ? 'var(--success)' : 'var(--text-muted)', textTransform: 'uppercase', minWidth: 52 }}>
+                            {item.customs.import.system}
+                          </span>
+                          {item.customs.import.ref
+                            ? <code style={{ fontSize: 10, color: 'var(--success)' }}>{item.customs.import.ref}</code>
+                            : <span className="text-xs text-muted">Import pending</span>
+                          }
+                        </div>
                       </div>
                     </td>
                     <td>

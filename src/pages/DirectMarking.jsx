@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, CheckCircle, Zap } from 'lucide-react';
+import { Play, Pause, RotateCcw, CheckCircle, Zap, Link2 } from 'lucide-react';
 import { orders, manufacturers, importers } from '../data/mockData';
 
 const QR_PATTERN = [
@@ -301,6 +301,12 @@ export default function DirectMarking({ activeCountry, notify }) {
                     <div><span className="code-key">"producer"</span>: <span className="code-str">"{currentOrder.producerName}"</span>,</div>
                     <div><span className="code-key">"destCountry"</span>: <span className="code-str">"{currentOrder.importerCountry}"</span>,</div>
                     <div><span className="code-key">"activatedAt"</span>: <span className="code-str">"{activationLog[0]?.ts}"</span>,</div>
+                    {currentOrder.customs?.export?.ref && (
+                      <div><span className="code-key">"exportDecl"</span>: <span className="code-str">"{currentOrder.customs.export.ref}"</span>,</div>
+                    )}
+                    {currentOrder.customs?.import?.ref && (
+                      <div><span className="code-key">"importEntry"</span>: <span className="code-str">"{currentOrder.customs.import.ref}"</span>,</div>
+                    )}
                     <div><span className="code-key">"status"</span>: <span className="code-val">"ACTIVATED"</span></div>
                   </div>
                 </div>
@@ -309,6 +315,84 @@ export default function DirectMarking({ activeCountry, notify }) {
           )}
         </div>
       </div>
+
+      {sessionComplete && currentOrder?.customs && (
+        <div className="card" style={{ borderTop: '3px solid var(--eac-blue)' }}>
+          <div className="card-header">
+            <span className="card-title"><Link2 size={15} /> Customs Chain Linkage</span>
+            <span className="status-badge badge-success">Linked</span>
+          </div>
+          <div className="card-body">
+            <div className="text-xs text-muted" style={{ marginBottom: 16 }}>
+              SCL production for this order is linked end-to-end with the customs management systems at both the sourcing and destination countries.
+            </div>
+            <div style={{ display: 'flex', alignItems: 'stretch', gap: 0 }}>
+              {/* SCL Production */}
+              <div style={{ flex: 1, padding: '14px 16px', borderRadius: 8, background: 'var(--bg)', border: '1px solid var(--border)', textAlign: 'center' }}>
+                <div style={{ fontSize: 20, marginBottom: 6 }}>{currentOrder.producerCountry === 'KE' ? '🇰🇪' : '🇹🇿'}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>SCL Production</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>{currentOrder.producerName}</div>
+                <div className="text-xs text-muted">{currentOrder.product}</div>
+                <div style={{ marginTop: 8 }}>
+                  <span className="status-badge badge-success">{totalMarked.toLocaleString()} codes activated</span>
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div style={{ display: 'flex', alignItems: 'center', padding: '0 8px', color: 'var(--text-muted)', fontSize: 20 }}>→</div>
+
+              {/* Export CMS */}
+              <div style={{
+                flex: 1, padding: '14px 16px', borderRadius: 8, border: '2px solid',
+                borderColor: currentOrder.customs.export.ref ? 'var(--eac-blue)' : 'var(--border)',
+                background: currentOrder.customs.export.ref ? 'rgba(29,78,216,0.04)' : 'var(--bg)',
+                textAlign: 'center',
+              }}>
+                <div style={{ fontSize: 20, marginBottom: 6 }}>{currentOrder.producerCountry === 'KE' ? '🇰🇪' : '🇹🇿'}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--eac-blue)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>
+                  {currentOrder.customs.export.system} — Export Declaration
+                </div>
+                {currentOrder.customs.export.ref ? (
+                  <>
+                    <div style={{ fontFamily: 'monospace', fontSize: 12, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 2 }}>
+                      {currentOrder.customs.export.ref}
+                    </div>
+                    <div className="text-xs text-muted">{currentOrder.customs.export.date}</div>
+                  </>
+                ) : (
+                  <span className="status-badge badge-neutral">Pending</span>
+                )}
+              </div>
+
+              {/* Arrow */}
+              <div style={{ display: 'flex', alignItems: 'center', padding: '0 8px', color: 'var(--text-muted)', fontSize: 20 }}>→</div>
+
+              {/* Import CMS */}
+              <div style={{
+                flex: 1, padding: '14px 16px', borderRadius: 8, border: '2px solid',
+                borderColor: currentOrder.customs.import.ref ? 'var(--success)' : 'var(--border)',
+                background: currentOrder.customs.import.ref ? '#dcfce7' : 'var(--bg)',
+                textAlign: 'center',
+              }}>
+                <div style={{ fontSize: 20, marginBottom: 6 }}>{currentOrder.importerCountry === 'KE' ? '🇰🇪' : '🇹🇿'}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: currentOrder.customs.import.ref ? 'var(--success)' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>
+                  {currentOrder.customs.import.system} — Import Entry
+                </div>
+                {currentOrder.customs.import.ref ? (
+                  <>
+                    <div style={{ fontFamily: 'monospace', fontSize: 12, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 2 }}>
+                      {currentOrder.customs.import.ref}
+                    </div>
+                    <div className="text-xs text-muted">{currentOrder.customs.import.date}</div>
+                  </>
+                ) : (
+                  <span className="status-badge badge-neutral">Awaiting shipment</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,11 +3,11 @@ import { Search, ShieldCheck, ShieldAlert, ArrowRight } from 'lucide-react';
 import { auditLogs } from '../data/mockData';
 
 const codeDatabase = {
-  'TZ-31200001': { prefix: 'TZ', orderId: 'ORD-TZ-2024-0891', product: 'Beer (500ml)', producer: 'Kenya Breweries Ltd', producerCountry: 'KE', destCountry: 'TZ', activated: true, exported: true, borderCleared: true, marketRelease: false, activatedAt: '2024-03-16 09:14', exportedAt: '2024-03-17', borderAt: null, alert: null },
-  'TZ-40000050': { prefix: 'TZ', orderId: 'ORD-TZ-2024-0880', product: 'Beer (500ml)', producer: 'Kenya Breweries Ltd', producerCountry: 'KE', destCountry: 'TZ', activated: true, exported: true, borderCleared: true, marketRelease: true, activatedAt: '2024-02-05 14:22', exportedAt: '2024-02-08', borderAt: '2024-02-09', alert: null },
-  'KE-80000123': { prefix: 'KE', orderId: 'ORD-KE-2024-1045', product: 'Beer (330ml)', producer: 'Tanzania Breweries Ltd', producerCountry: 'TZ', destCountry: 'KE', activated: true, exported: true, borderCleared: true, marketRelease: true, activatedAt: '2024-02-27 11:00', exportedAt: '2024-03-02', borderAt: '2024-03-03', alert: null },
-  'KE-00001234': { prefix: 'KE', orderId: 'ORD-KE-FAKE', product: 'Beer (500ml)', producer: 'Unknown', producerCountry: 'TZ', destCountry: 'KE', activated: false, exported: false, borderCleared: false, marketRelease: false, activatedAt: null, exportedAt: null, borderAt: null, alert: 'UNREGISTERED_CODE' },
-  'TZ-99999999': { prefix: 'TZ', orderId: 'ORD-TZ-SUSP', product: 'Beer (500ml)', producer: 'Kenya Breweries Ltd', producerCountry: 'KE', destCountry: 'KE', activated: true, exported: false, borderCleared: false, marketRelease: false, activatedAt: '2024-03-10 08:00', exportedAt: null, borderAt: null, alert: 'WRONG_COUNTRY' },
+  'TZ-31200001': { prefix: 'TZ', orderId: 'ORD-TZ-2024-0891', product: 'Beer (500ml)', producer: 'Kenya Breweries Ltd', producerCountry: 'KE', destCountry: 'TZ', activated: true, exported: true, borderCleared: false, marketRelease: false, activatedAt: '2024-03-16 09:14', exportedAt: '2024-03-17', borderAt: null, exportDecl: { system: 'iCMS', ref: 'iCMS-EXP-2024-KBL-0891' }, importEntry: { system: 'TANCIS', ref: 'TANCIS-IMP-2024-DS-0891', pending: true }, alert: null },
+  'TZ-40000050': { prefix: 'TZ', orderId: 'ORD-TZ-2024-0880', product: 'Beer (500ml)', producer: 'Kenya Breweries Ltd', producerCountry: 'KE', destCountry: 'TZ', activated: true, exported: true, borderCleared: true, marketRelease: true, activatedAt: '2024-02-05 14:22', exportedAt: '2024-02-08', borderAt: '2024-02-09', exportDecl: { system: 'iCMS', ref: 'iCMS-EXP-2024-KBL-0880' }, importEntry: { system: 'TANCIS', ref: 'TANCIS-IMP-2024-DS-0880', pending: false }, alert: null },
+  'KE-80000123': { prefix: 'KE', orderId: 'ORD-KE-2024-1045', product: 'Beer (330ml)', producer: 'Tanzania Breweries Ltd', producerCountry: 'TZ', destCountry: 'KE', activated: true, exported: true, borderCleared: true, marketRelease: true, activatedAt: '2024-02-27 11:00', exportedAt: '2024-03-02', borderAt: '2024-03-03', exportDecl: { system: 'TANCIS', ref: 'TANCIS-EXP-2024-TBL-1045' }, importEntry: { system: 'iCMS', ref: 'iCMS-IMP-2024-NBI-1045', pending: false }, alert: null },
+  'KE-00001234': { prefix: 'KE', orderId: 'ORD-KE-FAKE', product: 'Beer (500ml)', producer: 'Unknown', producerCountry: 'TZ', destCountry: 'KE', activated: false, exported: false, borderCleared: false, marketRelease: false, activatedAt: null, exportedAt: null, borderAt: null, exportDecl: null, importEntry: null, alert: 'UNREGISTERED_CODE' },
+  'TZ-99999999': { prefix: 'TZ', orderId: 'ORD-TZ-SUSP', product: 'Beer (500ml)', producer: 'Kenya Breweries Ltd', producerCountry: 'KE', destCountry: 'KE', activated: true, exported: false, borderCleared: false, marketRelease: false, activatedAt: '2024-03-10 08:00', exportedAt: null, borderAt: null, exportDecl: null, importEntry: null, alert: 'WRONG_COUNTRY' },
 };
 
 export default function AuditVerification({ notify }) {
@@ -29,9 +29,25 @@ export default function AuditVerification({ notify }) {
     { label: 'Order Created', done: true, detail: `${result.orderId}`, country: result.destCountry, date: '—' },
     { label: 'Codes Generated', done: true, detail: `Prefix ${result.prefix} assigned`, country: result.destCountry, date: '—' },
     { label: 'Synced to Producer', done: true, detail: `${result.producerCountry === 'KE' ? 'ETSMS' : 'EGMS'} → ${result.producerCountry === 'KE' ? 'producer SCL' : 'producer SCL'}`, country: result.producerCountry, date: '—' },
-    { label: 'Activated at Production', done: result.activated, detail: result.activated ? `Applied at ${result.producer}` : 'Not yet activated', country: result.producerCountry, date: result.activatedAt || '—' },
-    { label: 'Exported', done: result.exported, detail: result.exported ? 'Product dispatched' : 'Not yet exported', country: result.producerCountry, date: result.exportedAt || '—' },
-    { label: 'Border Cleared', done: result.borderCleared, detail: result.borderCleared ? 'Pre-registered, cleared without restamping' : 'Not yet at border', country: result.destCountry, date: result.borderAt || '—' },
+    { label: 'Activated at Production', done: result.activated, detail: result.activated ? `Applied at ${result.producer} — SCL codes activated` : 'Not yet activated', country: result.producerCountry, date: result.activatedAt || '—' },
+    {
+      label: `Exported — ${result.exportDecl ? result.exportDecl.system + ' Export Declaration' : (result.producerCountry === 'KE' ? 'iCMS' : 'TANCIS')}`,
+      done: result.exported,
+      detail: result.exported && result.exportDecl
+        ? `${result.exportDecl.ref} · ${result.producerCountry === 'KE' ? 'Kenya Revenue Authority' : 'Tanzania Revenue Authority'}`
+        : result.exported ? 'Exported — declaration reference unavailable' : 'Not yet exported',
+      country: result.producerCountry,
+      date: result.exportedAt || '—',
+    },
+    {
+      label: `Border Cleared — ${result.importEntry ? result.importEntry.system + ' Import Entry' : (result.destCountry === 'KE' ? 'iCMS' : 'TANCIS')}`,
+      done: result.borderCleared,
+      detail: result.borderCleared && result.importEntry
+        ? `${result.importEntry.ref} · Pre-registered, cleared without restamping`
+        : result.importEntry && result.importEntry.pending ? `${result.importEntry.ref} · Import entry lodged — clearance pending` : 'Not yet at border',
+      country: result.destCountry,
+      date: result.borderAt || '—',
+    },
     { label: 'Market Release', done: result.marketRelease, detail: result.marketRelease ? 'In market' : 'Pending', country: result.destCountry, date: '—' },
   ] : [];
 
@@ -132,6 +148,14 @@ export default function AuditVerification({ notify }) {
                     ['Producer Country', result.producerCountry === 'KE' ? '🇰🇪 Kenya' : '🇹🇿 Tanzania'],
                     ['Destination', result.destCountry === 'KE' ? '🇰🇪 Kenya' : '🇹🇿 Tanzania'],
                     ['Activated', result.activated ? `✓ ${result.activatedAt}` : '✗ Not activated'],
+                    [
+                      `${result.exportDecl?.system || (result.producerCountry === 'KE' ? 'iCMS' : 'TANCIS')} Export Decl.`,
+                      result.exportDecl?.ref || '—',
+                    ],
+                    [
+                      `${result.importEntry?.system || (result.destCountry === 'KE' ? 'iCMS' : 'TANCIS')} Import Entry`,
+                      result.importEntry?.ref ? (result.importEntry.pending ? `${result.importEntry.ref} (pending)` : result.importEntry.ref) : '—',
+                    ],
                   ].map(([k, v]) => (
                     <div key={k} style={{ padding: 10, background: 'var(--bg)', borderRadius: 6 }}>
                       <div className="text-xs text-muted">{k}</div>
